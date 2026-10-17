@@ -91,13 +91,13 @@ div[data-testid="stExpander"] {
 </style>
 """, unsafe_allow_html=True)
 # ==================================================
-# 3. 初始化会话状态
+# 3. 初始化会话状态【已填入你的密钥】
 # ==================================================
 defaults = {
     "page": "welcome",
     "identity": "",
     "legal_type": "",
-    "api_key": os.getenv("DEEPSEEK_API_KEY", ""),
+    "api_key": "sk-c91cbd1c10374de392cb38032869aca7",
     "model_choice": "deepseek-chat",
     "history": []
 }
@@ -134,12 +134,11 @@ def ask_ai(system_prompt, user_prompt):
     if not api_key:
         st.error(
             "请先配置 DeepSeek API Key。"
-            "点击页面上方的“DeepSeek 模型设置”进行配置。"
         )
         return None
     try:
         client = get_deepseek_client(api_key)
-        with st.spinner("DeepSeek 正在分析，请稍候……"):
+        with st.spinner("AI正在分析，请稍候……"):
             response = client.chat.completions.create(
                 model=model,
                 messages=[
@@ -156,7 +155,7 @@ def ask_ai(system_prompt, user_prompt):
             )
         answer = response.choices[0].message.content
         if not answer:
-            st.warning("DeepSeek 没有返回文字，请稍后重试。")
+            st.warning("AI没有返回文字，请稍后重试。")
             return None
         st.markdown(answer)
         st.session_state.history.append({
@@ -277,46 +276,6 @@ def page_home():
     st.markdown(
         '<div class="sub-title">解决纠纷 · 法为民生</div>',
         unsafe_allow_html=True
-    )
-    # --------------------------------------------------
-    # DeepSeek 模型设置
-    # --------------------------------------------------
-    with st.expander(
-        "🔑 DeepSeek 模型设置",
-        expanded=not bool(st.session_state.api_key)
-    ):
-        api_key_input = st.text_input(
-            "DeepSeek API Key",
-            value=st.session_state.api_key,
-            type="password",
-            placeholder="请输入你的 DeepSeek API Key",
-            help="请勿公开或分享你的 API Key。"
-        )
-        model_options = [
-            "deepseek-chat",
-            "deepseek-v4-pro"
-        ]
-        current_model = st.session_state.model_choice
-        if current_model not in model_options:
-            current_model = model_options[0]
-        selected_model = st.selectbox(
-            "选择 DeepSeek 模型",
-            model_options,
-            index=model_options.index(current_model)
-        )
-        if st.button("保存模型设置"):
-            if not api_key_input.strip():
-                st.warning("请先填写 DeepSeek API Key。")
-            else:
-                st.session_state.api_key = api_key_input.strip()
-                st.session_state.model_choice = selected_model
-                st.success(
-                    "设置已保存到当前会话。"
-                    "现在可以尝试进行法律咨询。"
-                )
-    st.caption(
-        "当前使用 DeepSeek API。"
-        "API 调用需要有效的密钥及可用的账户配额。"
     )
     # --------------------------------------------------
     # 用户信息
@@ -470,7 +429,7 @@ def page_home():
     # 页脚红色重点免责 +12348
     # --------------------------------------------------
     st.markdown("---")
-    st.markdown('<p class="red-notice">⚠️ 重要提示：AI生成内容仅为普法参考，不构成执业律师正式法律意见。如需专业法律帮助，请拨打全国公共法律服务热线：12348</p>', unsafe_allow_html=True)
+    st.markdown('<p class="red-notice">⚠️ 重要提示：AI生成内容仅为普法参考，不构成执业律师正式法律意见。如需专业法律帮助，请拨打全国公共法律服务热线：12348</p >', unsafe_allow_html=True)
     st.caption(
         "AI 法律助手 · 本工具提供一般法律信息，不替代执业律师的专业意见。"
     )
